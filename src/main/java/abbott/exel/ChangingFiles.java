@@ -16,11 +16,11 @@ public class ChangingFiles {
             Workbook workbook1 = new XSSFWorkbook(fis);
 
 
-            // Обработка первого файла
+            // Обработка изначального файла
             new ProcessWorkbook().processWorkbook(workbook1);
 
 
-            // Записываем изменения в третий файл
+            // Записываем изменения в файл
             FileOutputStream fos = new FileOutputStream(outputFilePath);
             workbook1.write(fos);
 
@@ -35,7 +35,7 @@ public class ChangingFiles {
 
     public void convertFile() {
         DataExel dataExel = new DataExel();
-        changingFiles(dataExel.inputFilePath(), dataExel.outputFilePath());
+        changingFiles(dataExel.inputFilePath(), DataExel.outputFilePath);
     }
 
 }

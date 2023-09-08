@@ -8,10 +8,12 @@ public class DataExel {
                 "C:\\***\\***\\***.xlsx");
     }
 
-    public String outputFilePath() {
+    private String outputFilePath() {
         String path = JOptionPane.showInputDialog(null, "Enter the path to the file to save\n" +
                 "C:\\***\\***");
         String name = JOptionPane.showInputDialog(null, "Enter the file name to save");
         return path + name + ".xlsx";
     }
+
+    public static final String outputFilePath = new DataExel().outputFilePath();
 }
