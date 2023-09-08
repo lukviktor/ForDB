@@ -1,5 +1,8 @@
 package abbott.access;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -16,15 +19,16 @@ public class ExcelToAccess {
     }
     public static void main(String[] args) {
         String excelFilePath = "path/to/your/file.xlsx";
+        String databasePath = "path/to/your/accessdatabase.accdb";
 
-        try (Connection connection = DriverManager.getConnection("jdbc:ucanaccess://path/to/your/accessdatabase.accdb")) {
-
-            Workbook workbook = XSSFWorkbook(excelFilePath);
+        try (Connection connection = DriverManager.getConnection("jdbc:ucanaccess://" + databasePath)) {
+            FileInputStream fis = new FileInputStream(excelFilePath);
+            Workbook workbook = new XSSFWorkbook(fis);
             int numberOfSheets = workbook.getNumberOfSheets();
 
             for (int i = 0; i < numberOfSheets; i++) {
                 Sheet sheet = workbook.getSheetAt(i);
-                String tableName = sheet.getSheet
+                String tableName = sheet.getSheetName();
                 // Создание таблицы в базе данных Access
                 createTable(connection, sheet, tableName);
 
@@ -33,21 +37,24 @@ public class ExcelToAccess {
             }
 
             workbook.close();
+            fis.close();
             System.out.println("Данные успешно импортированы в базу данных Access!");
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private static void createTable(Connection connection, Sheet sheet, String tableName) throws SQLException {
+    private static void createTable(Connection connection, Sheet sheet, String tableName) {
         StringBuilder createTableQuery = new StringBuilder("CREATE TABLE ");
         createTableQuery.append(tableName).append(" (");
 
         Row headerRow = sheet.getRow(0);
         Iterator<Cell> cellIterator = headerRow.cellIterator();
-        while (.hasNext()) {
+        while (cellIterator.hasNext()) {
             Cell cell = cellIterator.next();
             createTableQuery
                     .append(cell.getStringCellValue())
@@ -59,9 +66,22 @@ public class ExcelToAccess {
 
         createTableQuery.append(")");
 
-        PreparedStatement createTableStatement = connection.prepareStatement(createTableQuery.toString());
-        createTableStatement.executeUpdate();
-        createTableStatement.close();
+        PreparedStatement createTableStatement = null;
+        try {
+            createTableStatement = connection.prepareStatement(createTableQuery.toString());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            createTableStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            createTableStatement.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static void insertData(Connection connection, Sheet sheet, String tableName) throws SQLException {
