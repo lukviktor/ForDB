@@ -3,12 +3,13 @@ package abbott.exel;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import javax.swing.*;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class ChangingFiles {
-    public void changingFiles(String inputFilePath, String outputFilePath) {
+    private void changingFiles(String inputFilePath, String outputFilePath) {
         try {
             // Открываем файл
             FileInputStream fis = new FileInputStream(inputFilePath);
@@ -26,9 +27,15 @@ public class ChangingFiles {
             workbook1.close();
             fos.close();
 
-            System.out.println("Обработка выполнена успешно!");
+            JOptionPane.showMessageDialog(null, "Обработка выполнена успешно!");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    public void convertFile() {
+        DataExel dataExel = new DataExel();
+        changingFiles(dataExel.inputFilePath(), dataExel.outputFilePath());
+    }
+
 }
