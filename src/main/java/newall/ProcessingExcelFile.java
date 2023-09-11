@@ -1,8 +1,37 @@
-package abbott.exel;
+package newall;
 
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class ProcessWorkbook {
+import java.io.FileInputStream;
+import java.io.IOException;
+
+public class ProcessingExcelFile {
+
+    // Записываем изменения в файл
+    public void writingChangesFile() {
+        processWorkbook(openFileExel()); // Обработка изначального файла
+    }
+
+    // Открываем файл
+    public Workbook openFileExel() {
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(Data.inputFilePathExel);
+            Workbook workbook = new XSSFWorkbook(fis);
+            return workbook;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+
+        }
+    }
+
+    // Обработка изначального файла
+    public void processExel() {
+        processWorkbook(openFileExel());
+    }
+
+    // Обработка файла Exel
     void processWorkbook(Workbook workbook) {
         // обработка файла exel
         for (Sheet sheet : workbook) {

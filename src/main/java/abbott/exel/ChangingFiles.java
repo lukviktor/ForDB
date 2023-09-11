@@ -39,7 +39,6 @@ public class ChangingFiles {
     }
 
     public void convertFile() {
-        DataExel dataExel = new DataExel();
         changingFiles(DataExel.INPUT_FILE_PATH, DataExel.OUTPUT_FILE_PATH);
     }
 

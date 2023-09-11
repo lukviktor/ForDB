@@ -1,7 +1,13 @@
 package abbott.access;
 
+import abbott.exel.DataExel;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,17 +15,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Iterator;
 
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 public class ExcelToAccess {
 
     public void excelToAccess() {
-
-    }
-    public static void main(String[] args) {
-        String excelFilePath = "path/to/your/file.xlsx";
-        String databasePath = "path/to/your/accessdatabase.accdb";
+        String excelFilePath = DataExel.INPUT_FILE_PATH;
+        String databasePath = DataAccess.INPUT_FILE_PATH;
 
         try (Connection connection = DriverManager.getConnection("jdbc:ucanaccess://" + databasePath)) {
             FileInputStream fis = new FileInputStream(excelFilePath);
@@ -39,14 +39,11 @@ public class ExcelToAccess {
             workbook.close();
             fis.close();
             System.out.println("Данные успешно импортированы в базу данных Access!");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (SQLException | IOException e) {
             throw new RuntimeException(e);
         }
     }
+
 
     private static void createTable(Connection connection, Sheet sheet, String tableName) {
         StringBuilder createTableQuery = new StringBuilder("CREATE TABLE ");
@@ -112,5 +109,10 @@ public class ExcelToAccess {
             insertStatement.executeUpdate();
             insertStatement.close();
         }
+    }
+
+    public static void main(String[] args) {
+        //new ExcelToAccess().excelToAccess();
+        System.out.println(DataExel.INPUT_FILE_PATH);
     }
 }
