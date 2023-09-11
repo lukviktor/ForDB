@@ -1,13 +1,12 @@
 package abbott;
 
-import abbott.access.DataAccess;
-import abbott.exel.ChangingFiles;
+import abbott.exelaccess.ExcelToAccess;
+import abbott.exelaccess.ProcessingExcelFile;
 
 public class Main {
 
     public static void main(String[] args) {
-        new ChangingFiles().convertFile();
-//        new DataAccess()
-
+        new ProcessingExcelFile().openingAndModifyingExelFile();
+        new ExcelToAccess().excelToAccess();
     }
 }

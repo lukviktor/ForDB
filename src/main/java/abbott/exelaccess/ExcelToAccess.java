@@ -1,6 +1,5 @@
-package abbott.access;
+package abbott.exelaccess;
 
-import abbott.exel.DataExel;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -18,17 +17,15 @@ import java.util.Iterator;
 public class ExcelToAccess {
 
     public void excelToAccess() {
-        String excelFilePath = DataExel.INPUT_FILE_PATH;
-        String databasePath = DataAccess.INPUT_FILE_PATH;
-
-        try (Connection connection = DriverManager.getConnection("jdbc:ucanaccess://" + databasePath)) {
-            FileInputStream fis = new FileInputStream(excelFilePath);
+        try (Connection connection = DriverManager.getConnection(Data.INPUT_FILE_PATH_ACCESS)) {
+            FileInputStream fis = new FileInputStream(Data.OUTPUT_FILE_PATH_EXEL);
             Workbook workbook = new XSSFWorkbook(fis);
             int numberOfSheets = workbook.getNumberOfSheets();
 
             for (int i = 0; i < numberOfSheets; i++) {
                 Sheet sheet = workbook.getSheetAt(i);
                 String tableName = sheet.getSheetName();
+
                 // Создание таблицы в базе данных Access
                 createTable(connection, sheet, tableName);
 
@@ -109,10 +106,5 @@ public class ExcelToAccess {
             insertStatement.executeUpdate();
             insertStatement.close();
         }
-    }
-
-    public static void main(String[] args) {
-        //new ExcelToAccess().excelToAccess();
-        System.out.println(DataExel.INPUT_FILE_PATH);
     }
 }

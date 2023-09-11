@@ -1,38 +1,52 @@
-package newall;
+package abbott.exelaccess;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class ProcessingExcelFile {
-
-    // Записываем изменения в файл
-    public void writingChangesFile() {
-        processWorkbook(openFileExel()); // Обработка изначального файла
+    // Создаем поток
+    private FileInputStream fis() {
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(Data.INPUT_FILE_PATH_EXEL);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return fis;
     }
 
     // Открываем файл
-    public Workbook openFileExel() {
-        FileInputStream fis = null;
+    private Workbook workbook() {
+        Workbook workbook = null;
         try {
-            fis = new FileInputStream(Data.inputFilePathExel);
-            Workbook workbook = new XSSFWorkbook(fis);
-            return workbook;
+            workbook = new XSSFWorkbook(fis());
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+        return workbook;
+    }
 
+    // Обработка изначального файла и запись изменения в файл
+    private void processExel() {
+        new ProcessingExcelFile().processWorkbookExel(workbook());
+        try {
+            FileOutputStream fos = new FileOutputStream(Data.OUTPUT_FILE_PATH_EXEL);
+            workbook().write(fos);
+            workbook().close();
+            fos.close();
+            fis().close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    // Обработка изначального файла
-    public void processExel() {
-        processWorkbook(openFileExel());
-    }
-
     // Обработка файла Exel
-    void processWorkbook(Workbook workbook) {
+    private void processWorkbookExel(Workbook workbook) {
         // обработка файла exel
         for (Sheet sheet : workbook) {
             for (Row row : sheet) {
@@ -54,5 +68,9 @@ public class ProcessingExcelFile {
                 }
             }
         }
+    }
+
+    public void openingAndModifyingExelFile() {
+        processExel();
     }
 }
