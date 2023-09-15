@@ -11,24 +11,24 @@ import java.sql.Statement;
 public class ExcelToAccessImporter {
     public static void main(String[] args) {
 
-        String excelFilePath = "src/main/resources/ex.xlsx";
+        String excelFilePath = "ex.xlsx";
         String accessFilePath = "src/main/resources/db.accdb";
 
         try {
-            // Загрузка JDBC драйвера для Access
+            // Load JDBC драйвера for Access
             Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
 
-            // Установка соединения с базой данных Access
+            // Connection Data Base Access
             Connection conn = DriverManager.getConnection("jdbc:ucanaccess://" + accessFilePath);
 
-            // Чт Excel
+            // Read Excel
             Workbook workbook = new XSSFWorkbook(new File(excelFilePath));
 
-            // Перебор всех листов в файле Excel
+            // read every list in excels
             for (Sheet sheet : workbook) {
                 String tableName = sheet.getSheetName();
 
-                // Создание таблицы в базе данных Access
+                // Create table Data Base Access
                 String createTableQuery = "CREATE TABLE " + tableName + " (";
                 Row headerRow = sheet.getRow(0);
                 for (Cell cell : headerRow) {
@@ -39,7 +39,7 @@ public class ExcelToAccessImporter {
                 Statement statement = conn.createStatement();
                 statement.executeUpdate(createTableQuery);
 
-                // Вставка данных в таблицу
+                // Insert data in table
                 for (int i = 1; i <= sheet.getLastRowNum(); i++) {
                     Row dataRow = sheet.getRow(i);
                     String insertQuery = "INSERT INTO " + tableName + " VALUES (";
@@ -56,9 +56,10 @@ public class ExcelToAccessImporter {
                 }
             }
 
-            // Закрытие ресурсов
+            // Close recurse
             workbook.close();
             conn.close();
+
 
             System.out.println("Импорт данных успешно выполнен.");
         } catch (Exception e) {
